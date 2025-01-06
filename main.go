@@ -1,31 +1,47 @@
 package main
 
 import (
-	"fmt"
 	"github.com/bmamha/gator/internal/config"
+	"os"
+	"log"
 )
+
+type state struct {
+	cfg *config.Config 
+}
+
 
 func main(){
 	cfg, err := config.Read()
 	if err != nil {
-		fmt.Printf("error in reading user:%w\n", err)
+		log.Fatalf("error in reading user:%w\n", err)
 		return
 	}
+	s := &state{
+		&cfg,
+	}
+	
+	cmds := commands{
+		make(map[string]func(*state, command) error), 
+	}
 
+	cmds.register("login", handlerLogin)
 
-	err = cfg.SetUser("bereket")
-	if err != nil {
-		fmt.Printf("error in setting new user:%w\n", err)
+	if len(os.Args) < 2 {
+		log.Fatal("UsageL cli <command> [args...]")
 		return 
 	}
-	newCfg, err := config.Read()
-	if err != nil {
-		fmt.Printf("error in reading new user:%w\n", err)
-		return
+
+	cmdName := os.Args[1]
+	cmdArgs := os.Args[2:]
+
+	cmd := command{
+		cmdName,
+		cmdArgs, 
 	}
 
-	fmt.Println(newCfg.DbURL) 
-	fmt.Println(newCfg.CurrentUserName)
-
-
+	err = cmds.run(s, cmd)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
