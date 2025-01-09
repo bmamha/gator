@@ -1,45 +1,52 @@
 package main
-import _ "github.com/lib/pq"
+
 import (
-	"github.com/bmamha/gator/internal/config"
 	"database/sql"
-	"github.com/bmamha/gator/internal/database"
-	"os"
 	"log"
+	"os"
+
+	"github.com/bmamha/gator/internal/config"
+	"github.com/bmamha/gator/internal/database"
+	_ "github.com/lib/pq"
 )
 
 type state struct {
-	db *database.Queries 
+	db  *database.Queries
 	cfg *config.Config
 }
 
-
-func main(){
-  cfg, err := config.Read()
+func main() {
+	cfg, err := config.Read()
 	if err != nil {
-		log.Fatalf("error in reading user:%w\n", err)
+		log.Fatal(err)
 		return
+
 	}
 
 	db, err := sql.Open("postgres", cfg.DbURL)
-	dbQueries := database.New(db) 
- 
-	
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	dbQueries := database.New(db)
+
 	s := &state{
 		dbQueries,
 		&cfg,
 	}
-	
+
 	cmds := commands{
-		make(map[string]func(*state, command) error), 
+		make(map[string]func(*state, command) error),
 	}
 
-	cmds.register("login", handlerLogin)
+	cmds.register("login", loginHandler)
 	cmds.register("register", registerHandler)
-  cmds.register("reset", resetHandler)
+	cmds.register("reset", resetHandler)
+	cmds.register("users", usersHandler)
+	cmds.register("agg", aggCommand)
 	if len(os.Args) < 2 {
 		log.Fatal("UsageL cli <command> [args...]")
-		return 
+		return
 	}
 
 	cmdName := os.Args[1]
@@ -47,12 +54,11 @@ func main(){
 
 	cmd := command{
 		cmdName,
-		cmdArgs, 
+		cmdArgs,
 	}
 
 	err = cmds.run(s, cmd)
 	if err != nil {
 		log.Fatal(err)
 	}
-	}
-
+}
