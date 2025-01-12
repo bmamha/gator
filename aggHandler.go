@@ -7,7 +7,7 @@ import (
 
 const url = "https://www.wagslane.dev/index.xml"
 
-func aggCommand(s *state, cmd command) error {
+func aggHandler(s *state, cmd command) error {
 	if len(cmd.Args) != 0 {
 		return fmt.Errorf("no arguments needed for %s command", cmd.Name)
 	}
