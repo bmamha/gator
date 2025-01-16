@@ -15,9 +15,12 @@ func followingHandler(s *state, cmd command, user database.User) error {
 	if err != nil {
 		return fmt.Errorf("unable to find feeds for user: %w", err)
 	}
-
-	for _, item := range feedFollows {
-		fmt.Println(item.FeedName)
+	if len(feedFollows) == 0 {
+		fmt.Printf("No feed currently followed by %s\n", user.Name)
+	} else {
+		for _, item := range feedFollows {
+			fmt.Println(item.FeedName)
+		}
 	}
 	return nil
 }
