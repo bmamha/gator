@@ -16,7 +16,7 @@ func usersHandler(s *state, cmd command) error {
 	}
 
 	for _, user := range usersSlice {
-		name := user.Name.String
+		name := user.Name
 		if s.cfg.CurrentUserName == name {
 			fmt.Printf("- %s (current)\n", name)
 		} else {

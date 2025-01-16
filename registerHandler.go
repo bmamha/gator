@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"os"
 	"time"
@@ -22,10 +21,7 @@ func registerHandler(s *state, cmd command) error {
 		ID:        uuid.New(),
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
-		Name: sql.NullString{
-			String: cmd.Args[0],
-			Valid:  true,
-		},
+		Name:      cmd.Args[0],
 	}
 	user, err := s.db.CreateUser(context.Background(), params)
 	if err != nil {

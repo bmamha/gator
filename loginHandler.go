@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"os"
 )
@@ -12,10 +11,7 @@ func loginHandler(s *state, cmd command) error {
 		return fmt.Errorf("%s command expects a single argument- the username", cmd.Name)
 	}
 
-	name := sql.NullString{
-		String: cmd.Args[0],
-		Valid:  true,
-	}
+	name := cmd.Args[0]
 
 	_, err := s.db.GetUser(context.Background(), name)
 	if err != nil {

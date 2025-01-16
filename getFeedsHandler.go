@@ -21,9 +21,9 @@ func getFeedsHandler(s *state, cmd command) error {
 			fmt.Println("Could not get user name")
 		}
 		fmt.Println("---")
-		fmt.Println(feed.Name.String)
-		fmt.Println(feed.Url.String)
-		fmt.Println(user.Name.String)
+		fmt.Println(feed.Name)
+		fmt.Println(feed.Url)
+		fmt.Println(user.Name)
 		fmt.Println("---")
 
 	}
