@@ -1,23 +1,27 @@
 package main
 
 import (
-	"context"
 	"fmt"
+	"time"
 )
 
 const url = "https://www.wagslane.dev/index.xml"
 
 func aggHandler(s *state, cmd command) error {
-	if len(cmd.Args) != 0 {
-		return fmt.Errorf("no arguments needed for %s command", cmd.Name)
+	if len(cmd.Args) != 1 {
+		return fmt.Errorf("format: %s <url>", cmd.Name)
 	}
 
-	rss, err := fetchFeed(context.Background(), url)
+	time_between_reqs, err := time.ParseDuration(cmd.Args[0])
 	if err != nil {
-		return fmt.Errorf("unable to fetch rss: %w", err)
+		return fmt.Errorf("unable to parse time specified: %w", err)
 	}
+	fmt.Printf("Collecting feeds every %s", cmd.Args[0])
 
-	fmt.Println(rss)
+	ticker := time.NewTicker(time_between_reqs)
+	for ; ; <-ticker.C {
+		scrapeFeeds(s)
+	}
 
 	return nil
 }
